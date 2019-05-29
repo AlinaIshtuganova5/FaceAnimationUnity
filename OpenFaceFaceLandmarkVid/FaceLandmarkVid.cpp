@@ -248,7 +248,7 @@ extern "C"
 			{
 				face_model.Reset();
 			}
-			// выход из прилодения
+			// выход из приложения
 			else if (character_press == 'q')
 			{
 				face_model.Reset();
