@@ -166,8 +166,8 @@ extern "C"
 	// без аргументов: использование вывода
 	if (arguments.size() == 1)
 	{
-		cout << "For command line arguments see:" << endl;
-		cout << " https://github.com/TadasBaltrusaitis/OpenFace/wiki/Command-line-arguments";
+		cout << "Для аргументов командной строки:" << endl;
+		cout << " без аргументов командной строки";
 		return 0;
 	}
 
@@ -208,7 +208,7 @@ extern "C"
 			detection_success = LandmarkDetector::DetectLandmarksInVideo(grayscale_image, face_model, det_parameters);
 
 			// отслеживание вгляда
-			// Если отслеживание прошло успешно, и у нас есть модель глаза, оцените взгляд
+			// Если отслеживание прошло успешно, и у нас есть модель глаза, взгляд
 			if (detection_success && face_model.eye_model)
 			{
 				GazeAnalysis::EstimateGaze(face_model, gazeDirection0, sequence_reader.fx, sequence_reader.fy, sequence_reader.cx, sequence_reader.cy, true);
