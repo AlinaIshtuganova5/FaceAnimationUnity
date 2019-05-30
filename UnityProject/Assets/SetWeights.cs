@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -85,9 +85,9 @@ public class SetWeights : MonoBehaviour
         
         if (getdetection_success() == 1)
         {
-            // Mouth & Eye Brow Animation 
+            // Анимация рта и бровей 
 
-            // ArrayOfDouble de 0 --> 135 !=0 | 136 --> 140 = 0
+           
 
             IntPtr p2DDoubleArray = IntPtr.Zero;
             getXY(out p2DDoubleArray);
