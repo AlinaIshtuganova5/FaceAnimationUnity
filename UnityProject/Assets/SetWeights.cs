@@ -18,13 +18,13 @@ public class SetWeights : MonoBehaviour
     public Transform rtarget;
     Vector3 hr;
 
-    // Open Camera and getdetection_success fns
+    // открывается камера getdetection_success fns
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "getdetection_success", CallingConvention = CallingConvention.Cdecl)]
     static extern int getdetection_success();
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "main", CallingConvention = CallingConvention.StdCall)]
     static extern int main();
 
-    // Get Head pose [it could be replaced by one function by returning an array of doubles like in get XY]
+    // получаем данные головы
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "get_pose1", CallingConvention = CallingConvention.Cdecl)]
     static extern float get_pose1();
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "get_pose2", CallingConvention = CallingConvention.Cdecl)]
@@ -32,7 +32,7 @@ public class SetWeights : MonoBehaviour
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "get_pose3", CallingConvention = CallingConvention.Cdecl)]
     static extern float get_pose3();
 
-    // Get eyes gaze [it could be replaced by one function by returning an array of doubles like in get XY]
+    // получаем данные взгляда
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "get_gaze1", CallingConvention = CallingConvention.Cdecl)]
     static extern float get_gaze1();
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "get_gaze2", CallingConvention = CallingConvention.Cdecl)]
@@ -46,38 +46,37 @@ public class SetWeights : MonoBehaviour
     [DllImport("FaceLandmarkVid.dll", EntryPoint = "get_gaze6", CallingConvention = CallingConvention.Cdecl)]
     static extern float get_gaze6();
 
-    // Get X Y Face Position (double array) | 2D landmark [x1;x2;...xn;y1;y2...yn] 
+    // получаем  X Y положение головы (double array) | 2D ориентир [x1;x2;...xn;y1;y2...yn] 
     [DllImport("FaceLandmarkVid.dll", CallingConvention = CallingConvention.StdCall)]
     public static extern int getXY(out IntPtr pArrayOfDouble);
     double[] ArrayOfDouble = new double[140];
 
-    // Thread to Open Camera 
+    // поток открытия камеры 
     System.Threading.Thread newThread = new System.Threading.Thread(AMethod);
     private static void AMethod()
     {
         main();
     }
 
-    // Use this for initialization
+    // инициализация
     void Awake()
     {
         skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
         skinnedMesh = GetComponent<SkinnedMeshRenderer>().sharedMesh;
     }
 
-    // Use this for initialization
+    // инициализация
     void Start()
     {
         newThread.Start();
         InvokeRepeating("setBlendShapes", 0, 0.033f);
     }
 
-    // Update is called once per frame
     void Update()
     {
     }
 
-    //in succession
+   
     private void setBlendShapes()
     {
 
@@ -97,32 +96,14 @@ public class SetWeights : MonoBehaviour
             skinn[35] = Math.Abs(ArrayOfDouble[51]- ArrayOfDouble[57])*10;
 
 
-            /*
-            Debug.Log(" 0 : " + ArrayOfDouble[0]);
-            Debug.Log(" 100 : " + ArrayOfDouble[100]);
-            Debug.Log(" 135 : " + ArrayOfDouble[135]);
-            */
-
-            //--> this will give exception don't try it 
-            //Debug.Log(" 136 : " + ArrayOfDouble[136]);
-
-            // We have 68 ponint of X and 68 point of X but blendShapeCount = 50
-            // do some math here to get 50 point 
-
-            /**
-             * 
-             *   MATHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-             *
-             * 
-            */
-
+            
             blendShapeCount = skinnedMesh.blendShapeCount;
             for (int i = 0; i < blendShapeCount; i++)
              {
                  skinnedMeshRenderer.SetBlendShapeWeight(i, (float)skinn[i]);
              }
 
-            // Face Pose Animation
+            // анимация головы
 
             hr = new Vector3(Mathf.Rad2Deg * get_pose1(), Mathf.Rad2Deg * get_pose2(), Mathf.Rad2Deg * get_pose3());
         }
@@ -132,7 +113,7 @@ public class SetWeights : MonoBehaviour
         }
         head.rotation = Quaternion.Euler(hr);
 
-        // Eye Look At Animation
+        // анимация взгляда
 
         ltarget.localPosition = new Vector3(-1 * (get_gaze1() - 0.13f), get_gaze2() - 0.1f, get_gaze3() * -1);
         rtarget.localPosition = new Vector3(-1 * (get_gaze4() + 0.13f), get_gaze5() - 0.1f, get_gaze6() * -1);
@@ -141,7 +122,7 @@ public class SetWeights : MonoBehaviour
 
     }
 
-    // Close thread (No effect :v !)
+    // закрытие потока
     private void OnApplicationQuit()
     {
         newThread.Abort();
